@@ -31,3 +31,18 @@ def random_entry(request):
         return HttpResponseRedirect(random_page)
     return HttpResponseRedirect(reverse("index"))
 
+
+def search_entry(request):
+    if request.method == "POST":
+        title = request.POST["title"]
+        if util.get_entry(title):
+            return HttpResponseRedirect(title)
+        else:
+            searched_entries = []
+            for entry in util.list_entries():
+                if entry.lower().find(title.lower()) >= 0:
+                    searched_entries.append(entry)
+            return render(request, "encyclopedia/search.html", {
+                "entries": searched_entries,
+                "title": title
+            })
